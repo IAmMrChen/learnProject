@@ -18,6 +18,9 @@ class InfoController extends Controller
      * 3. 每期倒计时的时间需要存储在缓存中 避免刷新时间重置
      */
 
+
+    /** 后台部分 start **/
+
     /**
      * 获取结果、此处是所有结果
      * @return mixed
@@ -61,4 +64,19 @@ class InfoController extends Controller
 
         return $result;
     }
+
+    public function changeTime(Request $request)
+    {
+        $everyPeriodTime = $request->input('time');
+        $oldTime = Cache::get(CommonCode::EVERY_PERIOD_STR);
+        Cache::put(CommonCode::EVERY_PERIOD_STR, $everyPeriodTime, CommonCode::EVERY_EXPIRE);
+
+        // 如果时间调小了，需要往缓存中添加结果
+        if ($oldTime > $everyPeriodTime) {
+            // 计算新的结果总数有多少个
+            $totalCount = ceil(24*60/$everyPeriodTime);
+        }
+    }
+
+    /** 后台部分 end **/
 }

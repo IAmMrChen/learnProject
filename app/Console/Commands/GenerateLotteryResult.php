@@ -57,5 +57,12 @@ class GenerateLotteryResult extends Command
         Cache::put($date, json_encode($result), CommonCode::EXPIRE_TIME); // 结果存入缓存5天过期
         Cache::put(CommonCode::TOTAL_DAY, $totalDay + 1, CommonCode::TOTAL_DAY_EXPIRE_DAY); // 次数统计存入缓存一年过期
         Cache::put(CommonCode::CURRENT_PERIOD, 1, CommonCode::CURRENT_PERIOD_EXPIRE); // 当前为第一次记录缓存 一天过期
+        Cache::put(CommonCode::BEGIN_TIME, time(), CommonCode::BEGIN_TIME_EXPIRE); // 记录开始时间
+
+
+        Cache::put(CommonCode::PERIOD_TIMES_STR, CommonCode::PERIOD_TIMES, CommonCode::EXPIRE_TIME); // 记录每天默认有多少期
+        if (!Cache::get(CommonCode::EVERY_PERIOD_STR)) {
+            Cache::put(CommonCode::EVERY_PERIOD_STR, CommonCode::EVERY_PERIOD_TIME, CommonCode::EVERY_EXPIRE);
+        }
     }
 }
