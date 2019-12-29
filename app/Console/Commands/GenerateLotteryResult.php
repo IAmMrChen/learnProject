@@ -40,8 +40,9 @@ class GenerateLotteryResult extends Command
     {
         file_put_contents(__DIR__."/".date('Y-m-d').'.log',"Log info".date('Y-m-d H:i:s')."\r\n",FILE_APPEND);
         $date = date('Y-m-d', time());    // 缓存键值 今天的日期
-        $periodTimes = CommonCode::PERIOD_TIMES; // 次数
-        $bit = CommonCode::BIT;                  // 结果总位数
+        $bit = CommonCode::BIT; // 位数 数组
+        $period_time = Cache::get(CommonCode::PERIOD_TIMES_STR);
+        $periodTimes = $period_time ? $period_time : CommonCode::PERIOD_TIMES; // 次数 如果存在从缓存中直接取，否则使用默认次数
 
         // 生成结果
         $result = [];
@@ -59,8 +60,9 @@ class GenerateLotteryResult extends Command
         Cache::put(CommonCode::CURRENT_PERIOD, 1, CommonCode::CURRENT_PERIOD_EXPIRE); // 当前为第一次记录缓存 一天过期
         Cache::put(CommonCode::BEGIN_TIME, time(), CommonCode::BEGIN_TIME_EXPIRE); // 记录开始时间
 
-
-        Cache::put(CommonCode::PERIOD_TIMES_STR, CommonCode::PERIOD_TIMES, CommonCode::EXPIRE_TIME); // 记录每天默认有多少期
+        if (!$period_time) {
+            Cache::put(CommonCode::PERIOD_TIMES_STR, CommonCode::PERIOD_TIMES, CommonCode::EXPIRE_TIME); // 如果不存在记录每天默认期数
+        }
         if (!Cache::get(CommonCode::EVERY_PERIOD_STR)) {
             Cache::put(CommonCode::EVERY_PERIOD_STR, CommonCode::EVERY_PERIOD_TIME, CommonCode::EVERY_EXPIRE);
         }
